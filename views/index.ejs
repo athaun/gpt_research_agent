@@ -1,0 +1,24 @@
+<%- include('layouts/main') %>
+
+<div class="max-w-4xl w-3/4 mx-auto mt-8 "> 
+  <div class="bg-gray-800 rounded-lg shadow-lg p-6 mb-8 border border-gray-700">
+    <h2 class="text-xl font-semibold mb-4 text-blue-300">Start a New Chat</h2>
+    <form action="/chat/new" method="POST">
+      <div class="mb-4">
+        <label class="block text-gray-300 mb-2" for="model">Select Model:</label>
+        <select id="model" name="model" class="w-full p-2 bg-gray-700 border border-gray-600 rounded text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <% models.forEach(model => { %>
+            <option value="<%= model.name %>"><%= model.name %></option>
+          <% }) %>
+        </select>
+      </div>
+      <div class="mb-4">
+        <label class="block text-gray-300 mb-2" for="systemPrompt">System Prompt (Optional):</label>
+        <textarea id="systemPrompt" name="systemPrompt" rows="3" class="w-full p-2 bg-gray-700 border border-gray-600 rounded text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter a system prompt to guide the model's behavior..."></textarea>
+      </div>
+      <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded transition">Start Chat</button>
+    </form>
+  </div>
+  
+  
+</div>

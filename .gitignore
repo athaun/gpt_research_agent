@@ -1,0 +1,15 @@
+node_modules/
+/build/  # Compiled JavaScript files (if you're using a bundler like Webpack or Parcel)
+/dist/   # Similar to /build/ - for deployment-ready builds
+/tmp/    # Temporary files created during development
+.DS_Store  # macOS specific - hidden files created by Finder
+/coverage/ # Test coverage reports
+.nyc_output #nyc output files
+/public/ # If you have a public directory
+/static/ # If you have a static directory
+.env       # Environment variables (VERY IMPORTANT - don't commit these!)
+/logs/     # Log files
+.vscode/   # VS Code specific settings
+/test/     # Test files and directories
+.idea/     # IntelliJ IDEA specific files
+/nodemon.json #nodemon configuration file

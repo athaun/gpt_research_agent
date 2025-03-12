@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ollama Chat</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/nord.min.css"> -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.0.2/marked.min.js"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            dark: {
+              100: '#1e1e1e', //   Lighter than background, for subtle UI elements
+              200: '#282828', //   Slightly darker, for secondary areas
+              300: '#363636', //   For panels, cards, and code block backgrounds
+              400: '#444444', //   Subtle hover effects, less prominent text
+              500: '#525252', //   Medium contrast text, inactive states
+              600: '#606060', //   Slightly lighter text, less important info
+              700: '#757575', //   Even lighter text, for contrast
+              800: '#1a1a1a', //   Gray for sidebar background (as provided)
+              900: '#121212', //   Very dark gray for main background (as provided)
+            },
+            //   Blue accent to match the screenshot
+            blue: {
+              400: '#60A5FA', //   Light blue for interactive elements
+              500: '#3B82F6', //   Main blue for buttons and links
+              600: '#2563EB', //   Darker blue for hover/active states
+            },
+            gray: {
+              700: '#363636', //   Use dark.300 for a consistent gray
+              800: '#1a1a1a', //   Sidebar background (duplicated for clarity)
+              900: '#121212', //   Main background (duplicated for clarity)
+            },
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    body {
+      overflow: hidden;
+    }
+    .message-content pre {
+      background-color: #374151;
+      /* Darker background for code blocks */
+      border-radius: 6px;
+      padding: 1rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+    }
+
+    .message-content code {
+      font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+    }
+
+    .message-content p {
+      margin-bottom: 1rem;
+    }
+
+    /* Dark mode scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #1F2937;
+      /* Darker scrollbar track */
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #4B5563;
+      /* Darker scrollbar thumb */
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #6B7280;
+      /* Slightly lighter hover */
+    }
+  </style>
+</head>
+
+<body class="bg-gray-900 text-gray-100 min-h-screen flex">
+
+  <div class="flex flex-row">
+    <nav class="bg-gray-800 text-gray-100 w-64 p-4 flex-shrink-0">
+      <div class="space-y-6">
+        <a href="/"><img src="../logo.png" alt="" srcset=""></a>
+        <div class="space-y-4">
+          
+        </div>
+      </div>
+
+      <% if (recentChats.length> 0) { %>
+        <ul class="divide-y divide-gray-700">
+          <li class="py-3">
+            <a href="/" class="flex justify-between items-center hover:bg-gray-700 p-2 rounded transition">
+              <h3 class="font-medium text-sm text-gray-100">
+                Home
+              </h3>
+              <span class="text-blue-400">&rarr;</span>
+            </a>
+          </li>
+          <% recentChats.forEach(chat=> { %>
+            <li class="py-3">
+              <a href="/chat/<%= chat._id %>" class="flex justify-between items-center hover:bg-gray-700 p-2 rounded transition">
+                <div>
+                  <h3 class="font-medium text-sm text-gray-100">
+                    <%= chat.title %>
+                  </h3>
+                  <p class="text-sm text-gray-400">Model: <%= chat.model %>
+                  </p>
+                  <p class="text-xs text-gray-500">
+                    <%= new Date(chat.updatedAt).toLocaleString() %>
+                  </p>
+                </div>
+                <span class="text-blue-400">&rarr;</span>
+              </a>
+            </li>
+            <% }) %>
+
+            <li class="py-3">
+              <a href="/chat/history" class="flex justify-between items-center hover:bg-gray-700 p-2 rounded transition">
+                <div>
+                  <h3 class="font-medium text-sm text-gray-100">
+                    Full History
+                  </h3>                
+                </div>
+                <span class="text-blue-400">&rarr;</span>
+              </a>
+            </li>
+        </ul>
+        <br>
+      <% } %>
+    </nav>
+
+    
+  </div>
+</body>
+
+</html>
