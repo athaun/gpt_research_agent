@@ -14,14 +14,11 @@ const __dirname = path.dirname(__filename);
 import indexRoutes from './routes/index.js';
 import chatRoutes from './routes/chat.js';
 
-// Import database connection
 import connectDB from './config/db.js';
 
-// Initialize app
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Connect to MongoDB
 connectDB();
 
 // Set view engine

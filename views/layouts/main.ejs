@@ -23,10 +23,9 @@
               500: '#525252', //   Medium contrast text, inactive states
               600: '#606060', //   Slightly lighter text, less important info
               700: '#757575', //   Even lighter text, for contrast
-              800: '#1a1a1a', //   Gray for sidebar background (as provided)
-              900: '#121212', //   Very dark gray for main background (as provided)
+              800: '#1a1a1a', //   Gray for sidebar background
+              900: '#121212', //   Very dark gray for main background
             },
-            //   Blue accent to match the screenshot
             blue: {
               400: '#60A5FA', //   Light blue for interactive elements
               500: '#3B82F6', //   Main blue for buttons and links
@@ -34,8 +33,8 @@
             },
             gray: {
               700: '#363636', //   Use dark.300 for a consistent gray
-              800: '#1a1a1a', //   Sidebar background (duplicated for clarity)
-              900: '#121212', //   Main background (duplicated for clarity)
+              800: '#1a1a1a', //   Sidebar background
+              900: '#121212', //   Main background
             },
           },
         },
@@ -49,24 +48,25 @@
 
     body {
       overflow: hidden;
-
       font-family: "Inter", sans-serif;
       font-optical-sizing: auto;
       font-style: normal;
       line-height: 2.3;
       letter-spacing: 0.5px;
     }
+
     .message-content pre {
       background-color: #374151;
-      /* Darker background for code blocks */
       border-radius: 6px;
       padding: 1rem;
       overflow-x: auto;
       margin: 1rem 0;
     }
 
-    .message-content code {
-      font-family: monospace, 'Monaco', 'Courier New', monospace;
+    .message-content hr {
+      border: none;
+      border-top: 1px solid #4B5563;
+      margin: 1rem 0;
     }
 
     .message-content p {
@@ -136,7 +136,7 @@
                   <h3 class="font-medium text-sm text-gray-100">
                     <%= chat.title %>
                   </h3>
-                  <p class="text-sm text-gray-400">Model: <%= chat.model %>
+                  <p class="text-sm text-gray-400"><%= chat.model %>
                   </p>
                   <p class="text-xs text-gray-500">
                     <%= new Date(chat.updatedAt).toLocaleString() %>
