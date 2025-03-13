@@ -44,8 +44,17 @@
   </script>
 
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap');
+
     body {
       overflow: hidden;
+
+      font-family: "Inter", sans-serif;
+      font-optical-sizing: auto;
+      font-style: normal;
+      line-height: 2.3;
+      letter-spacing: 0.5px;
     }
     .message-content pre {
       background-color: #374151;
@@ -57,7 +66,7 @@
     }
 
     .message-content code {
-      font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+      font-family: monospace, 'Monaco', 'Courier New', monospace;
     }
 
     .message-content p {
@@ -90,6 +99,11 @@
       max-width: 100%;
       overflow-x: auto;
       background-color: #232323;
+    }
+
+    .message-content pre code {
+      font-family: 'Source Code Pro', monospace;
+      font-size: 0.9rem;
     }
   </style>
 </head>
