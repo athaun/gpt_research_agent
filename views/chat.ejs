@@ -10,13 +10,14 @@
                     (message.role === 'system' ? 'bg-gray-700 text-gray-300' : 'bg-green-900 text-green-200') %>">
             <%= message.role==='user' ? 'U' : (message.role==='system' ? 'S' : 'A' ) %>
           </div>
-          <div class="ml-3 bg-gray-800 rounded-lg p-4 shadow-md border border-gray-700 message-content w-full" style="">
+          <div class="ml-3 bg-gray-800 rounded-lg p-4 shadow-md border border-gray-700 message-content w-full mt-4">
+            
             <% if (message.role==='system' ) { %>
               <p class="text-sm text-gray-400 italic">System Prompt:</p>
-              <% } %>
-                <div class="max-w-none markdown-content text-gray-300">
-                  <%- (marked.parse(message.content)) %>
-                </div>
+            <% } %>
+            <div class="prose prose-invert max-w-none markdown-content text-gray-300">
+              <%- marked.parse(message.content) %>
+            </div>
           </div>
         </div>
       </div>
@@ -37,7 +38,6 @@
     </form>
   </div>
 </div>
-
 
 <!-- Edit Chat Modal -->
 <div id="edit-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center hidden z-10">
@@ -208,7 +208,6 @@
       // Scroll to bottom
       chatContainer.scrollTop = chatContainer.scrollHeight;
     }
-
 
     async function submitMessage() {
       const message = messageInput.value.trim();

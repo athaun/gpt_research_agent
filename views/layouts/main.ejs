@@ -86,9 +86,10 @@
       /* Slightly lighter hover */
     }
 
-    pre {
-      max-width: 45%;
+    .message-content pre {
+      max-width: 100%;
       overflow-x: auto;
+      background-color: #232323;
     }
   </style>
 </head>
@@ -97,7 +98,7 @@
 
   <div class="flex flex-row">
     <nav class="bg-gray-800 text-gray-100 w-64 p-4 flex-shrink-0">
-      <div class="space-y-6">
+      <div class="space-y-6 w-28 mt-8 mx-auto">
         <a href="/"><img src="../logo.png" alt="" srcset=""></a>
         <div class="space-y-4">
           
@@ -109,7 +110,7 @@
           <li class="py-3">
             <a href="/" class="flex justify-between items-center hover:bg-gray-700 p-2 rounded transition">
               <h3 class="font-medium text-sm text-gray-100">
-                Home
+                New Chat
               </h3>
               <span class="text-blue-400">&rarr;</span>
             </a>
