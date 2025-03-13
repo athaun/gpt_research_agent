@@ -11,9 +11,9 @@ router.get('/history', async (req, res) => {
   try {
     const chats = await Chat.find().sort({ updatedAt: -1 });
     const recentChats = await Chat.find()
-          .sort({ updatedAt: -1 })
-          .limit(5);
-    res.render('history', { recentChats, chats,  });
+      .sort({ updatedAt: -1 })
+      .limit(5);
+    res.render('history', { recentChats, chats, });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -61,8 +61,8 @@ router.get('/:id', async (req, res) => {
     const models = await ollama.list();
 
     const recentChats = await Chat.find()
-          .sort({ updatedAt: -1 })
-          .limit(5);
+      .sort({ updatedAt: -1 })
+      .limit(5);
 
     res.render('chat', {
       chat,
@@ -77,6 +77,51 @@ router.get('/:id', async (req, res) => {
 });
 
 // Send message
+// router.post('/:id/message', async (req, res) => {
+//   try {
+//     const { message } = req.body;
+//     const chat = await Chat.findById(req.params.id);
+
+//     if (!chat) {
+//       return res.status(404).json({ error: 'Chat not found' });
+//     }
+
+//     // Add user message
+//     chat.messages.push({
+//       role: 'user',
+//       content: message
+//     });
+
+//     // Get response from Ollama
+//     const response = await ollama.chat({
+//       model: chat.model,
+//       messages: chat.messages
+//     });
+
+//     // Add assistant response
+//     chat.messages.push({
+//       role: 'assistant',
+//       content: response.message.content
+//     });
+
+//     // Update chat title if it's still the default
+//     if (chat.title === 'New Chat' && chat.messages.length > 0) {
+//       chat.title = message.substring(0, 20) + (message.length > 20 ? '...' : '');
+//     }
+
+//     chat.updatedAt = Date.now();
+//     await chat.save();
+
+//     res.json({
+//       success: true,
+//       reply: response.message.content,
+//       chatId: chat._id
+//     });
+//   } catch (error) {
+//     res.status(500).json({ error: error.message });
+//   }
+// });
+
 router.post('/:id/message', async (req, res) => {
   try {
     const { message } = req.body;
@@ -87,22 +132,7 @@ router.post('/:id/message', async (req, res) => {
     }
 
     // Add user message
-    chat.messages.push({
-      role: 'user',
-      content: message
-    });
-
-    // Get response from Ollama
-    const response = await ollama.chat({
-      model: chat.model,
-      messages: chat.messages
-    });
-
-    // Add assistant response
-    chat.messages.push({
-      role: 'assistant',
-      content: response.message.content
-    });
+    chat.messages.push({ role: 'user', content: message });
 
     // Update chat title if it's still the default
     if (chat.title === 'New Chat' && chat.messages.length > 0) {
@@ -112,13 +142,53 @@ router.post('/:id/message', async (req, res) => {
     chat.updatedAt = Date.now();
     await chat.save();
 
-    res.json({
-      success: true,
-      reply: response.message.content,
-      chatId: chat._id
-    });
+    res.status(200).json({ success: true });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+router.get('/:id/stream', async (req, res) => {
+  try {
+    const chat = await Chat.findById(req.params.id);
+    if (!chat) {
+      return res.status(404).json({ error: 'Chat not found' });
+    }
+
+    const lastUserMessage = chat.messages.filter(m => m.role === 'user').pop();
+    if (!lastUserMessage) {
+      return res.status(400).json({ error: 'No user message found' });
+    }
+
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+
+    const stream = await ollama.chat({
+      model: chat.model,
+      messages: [{ role: 'user', content: lastUserMessage.content }],
+      stream: true
+    });
+
+    let assistantResponse = '';
+
+    for await (const part of stream) {
+      res.write(`data: ${JSON.stringify(part)}\n\n`);
+      assistantResponse += part.message.content;
+    }
+
+    res.write('data: [DONE]\n\n'); // Signal completion
+    res.end();
+
+    // Save assistant response
+    chat.messages.push({ role: 'assistant', content: assistantResponse });
+    chat.updatedAt = Date.now();
+    await chat.save();
+  } catch (error) {
+    console.error(error);
+    res.write(`data: {"error": "${error.message}"}\n\n`);
+    res.end();
   }
 });
 

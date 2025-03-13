@@ -209,6 +209,33 @@
       chatContainer.scrollTop = chatContainer.scrollHeight;
     }
 
+    // async function submitMessage() {
+    //   const message = messageInput.value.trim();
+    //   if (!message) return;
+
+    //   addMessageToUI('user', message);
+    //   messageInput.value = '';
+
+    //   try {
+    //     const response = await fetch(`/chat/${chatId}/message`, {
+    //       method: 'POST',
+    //       headers: {
+    //         'Content-Type': 'application/json'
+    //       },
+    //       body: JSON.stringify({ message })
+    //     });
+
+    //     const data = await response.json();
+    //     if (data.success) {
+    //       addMessageToUI('assistant', data.reply);
+    //     } else {
+    //       console.error('Error:', data.error);
+    //     }
+    //   } catch (error) {
+    //     console.error('Error:', error);
+    //   }
+    // }
+
     async function submitMessage() {
       const message = messageInput.value.trim();
       if (!message) return;
@@ -216,25 +243,56 @@
       addMessageToUI('user', message);
       messageInput.value = '';
 
-      try {
-        const response = await fetch(`/chat/${chatId}/message`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ message })
-        });
+      // Step 1: Send the message to the server via POST
+      const response = await fetch(`/chat/${chatId}/message`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message }),
+      });
 
-        const data = await response.json();
-        if (data.success) {
-          addMessageToUI('assistant', data.reply);
-        } else {
+      if (!response.ok) {
+        console.error("Failed to send message:", await response.text());
+        return;
+      }
+
+      // Step 2: Open EventSource to receive streaming response
+      const eventSource = new EventSource(`/chat/${chatId}/stream`);
+
+      let assistantMessage = '';
+
+      eventSource.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        
+        if (data.error) {
           console.error('Error:', data.error);
+          eventSource.close();
+          return;
         }
-      } catch (error) {
-        console.error('Error:', error);
+
+        if (event.data === '[DONE]') {
+          eventSource.close();
+          return;
+        }
+
+        assistantMessage += data.message.content;
+        updateLastMessage(assistantMessage);
+      };
+
+      eventSource.onerror = () => {
+        eventSource.close();
+      };
+    }
+
+
+    function updateLastMessage(content) {
+      const lastMessage = document.querySelector('.assistant-message:last-child .markdown-content');
+      if (lastMessage) {
+        lastMessage.innerHTML = marked.parse(content);
+      } else {
+        addMessageToUI('assistant', content);
       }
     }
+
 
     messageInput.addEventListener('keydown', function (e) {
       if (e.key === 'Enter' && !e.shiftKey) {
