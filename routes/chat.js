@@ -1,6 +1,8 @@
 import express from 'express';
 import Chat from '../models/Chat.js';
 import ollama from 'ollama';
+import { marked } from 'marked';
+import DOMPurify from 'dompurify';
 
 const router = express.Router();
 
@@ -11,7 +13,7 @@ router.get('/history', async (req, res) => {
     const recentChats = await Chat.find()
           .sort({ updatedAt: -1 })
           .limit(5);
-    res.render('history', { recentChats, chats });
+    res.render('history', { recentChats, chats,  });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -23,6 +25,12 @@ router.post('/new', async (req, res) => {
     const { model, systemPrompt } = req.body;
 
     const messages = [];
+    messages.push({
+      role: 'system',
+      // content: 'Respond in a simple, straightforward manner without being overly friendly or emotional. Output where necessary in HTML tags; your tags are injected into the chat interface frontend. Wrap code blocks with pre and code tags. Do not write in markdown unless asked.'
+      content: 'Respond concisely and factually. Prioritize accuracy and clarity. Avoid speculation, opinions, or emotional language. When presenting information, use structured formats like lists or tables where appropriate.'
+    });
+
     if (systemPrompt) {
       messages.push({
         role: 'system',
@@ -59,7 +67,9 @@ router.get('/:id', async (req, res) => {
     res.render('chat', {
       chat,
       recentChats,
-      models: models.models
+      models: models.models,
+      marked: marked,
+      DOMPurify: DOMPurify
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -96,7 +106,7 @@ router.post('/:id/message', async (req, res) => {
 
     // Update chat title if it's still the default
     if (chat.title === 'New Chat' && chat.messages.length > 0) {
-      chat.title = message.substring(0, 30) + (message.length > 30 ? '...' : '');
+      chat.title = message.substring(0, 20) + (message.length > 20 ? '...' : '');
     }
 
     chat.updatedAt = Date.now();

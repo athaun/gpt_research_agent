@@ -1,6 +1,6 @@
 <%- include('layouts/main') %>
 
-<div class="max-w-4xl w-3/4 mx-auto mt-8 ">
+<div class="max-w-4xl w-3/4 mx-auto mt-8 overflow-y-auto max-h-screen">
   <h1 class="text-3xl font-bold mb-6 text-blue-400">Chat History</h1>
   
   <% if (chats.length === 0) { %>
@@ -8,7 +8,7 @@
       <p class="text-gray-400">No chat history yet. <a href="/" class="text-blue-400 hover:underline">Start a new chat</a>.</p>
     </div>
   <% } else { %>
-    <div class="bg-gray-800 rounded-lg shadow-lg overflow-hidden border border-gray-700">
+    <div class="bg-gray-800 rounded-lg shadow-lg border border-gray-700">
       <ul class="divide-y divide-gray-700">
         <% chats.forEach(chat => { %>
           <li>
